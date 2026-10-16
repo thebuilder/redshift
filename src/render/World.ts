@@ -345,7 +345,12 @@ export function buildLevelScene(level: BuiltLevel): LevelScene {
     for (let k = 0; k < 20 && !clearOfTrack(p, r); k++) p.addScaledVector(o, 4);
     return clearOfTrack(p, r);
   };
-  const floodBeam = beamMat(new THREE.Color(0.8, 0.85, 1.0), 0.055);
+  // a tall ramp right in front of the start line would be lit point-blank by every
+  // floodlight (and their beams would fill the chase view), so dim them to suit
+  const startPos = track.sample(level.startS).pos;
+  const rampDist = Math.hypot(center.x - startPos.x, center.z - startPos.z);
+  const floodK = THREE.MathUtils.clamp(rampDist / 70, 0.3, 1);
+  const floodBeam = beamMat(new THREE.Color(0.8, 0.85, 1.0), 0.055 * (0.4 + 0.6 * floodK));
   const flood: THREE.SpotLight[] = [];
   /** floodlight on a mast: lamp head aimed at the target, real spot light, visible beam from the lens */
   const addFlood = (pos: THREE.Vector3, target: THREE.Vector3, intensity: number, angle: number) => {
@@ -384,7 +389,7 @@ export function buildLevelScene(level: BuiltLevel): LevelScene {
       for (const along of [-0.35, 0.45]) {
         const p = center.clone().addScaledVector(fm.R, side * off).addScaledVector(fm.T, along * Math.max(40, size.x)).setY(30);
         if (!placeClear(p, fm.R.clone().multiplyScalar(side), 6)) continue;
-        addFlood(p, aim, 6500, 0.4);
+        addFlood(p, aim, 6500 * floodK, 0.4);
       }
     // landing hill, lit from both sides
     const hd = new THREE.Vector3(level.hill.dir.x, 0, level.hill.dir.y);

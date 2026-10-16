@@ -346,7 +346,7 @@ export function createCar(envMap: THREE.Texture | null): CarVisual {
   group.add(under);
   // two wide headlights at the corners of the light bar
   // the light bar casts one wide, even wash plus a soft fan of light on the road ahead
-  const headLight = new THREE.SpotLight(0xf2f4ff, 150, 85, 0.95, 1.0, 1.7);
+  const headLight = new THREE.SpotLight(0xf2f4ff, 95, 85, 0.95, 1.0, 1.7);
   // the lamp sits just ahead of the nose: anywhere inside the body it floods the bumper
   // and splitter at point-blank range and shows up as a white-hot patch on the car
   headLight.position.set(2.75, ground + 0.46, 0);

@@ -21,9 +21,9 @@ export const LEVELS: LevelDef[] = [
     landing: 'hill',
   },
   {
-    id: 11, name: 'INVERSION', tag: 'Inverted ramp · 125° · ease it down',
-    hint: 'Up the wall and past vertical: you leave upside down and spinning. Turn it round, then hold SPACE and lower it onto the pad. Gently.',
-    segments: [{ type: 'straight', length: 14 }, { type: 'arc', angle: 125, radius: 11 }],
+    id: 11, name: 'INVERSION', tag: 'Inverted arch · ease it down',
+    hint: 'Up the wall, over the top and along the ceiling: you leave upside down, flying backwards. Roll it over, then hold SPACE and lower it onto the pad. Gently.',
+    segments: [{ type: 'straight', length: 14 }, { type: 'arc', angle: 90, radius: 9 }, { type: 'straight', length: 12 }, { type: 'arc', angle: 90, radius: 6 }],
     landing: 'pad',
   },
   {

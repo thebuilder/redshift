@@ -6,7 +6,7 @@ export interface LevelDef {
   tag: string; // ramp type
   hint: string;
   segments: Segment[];
-  landing: 'hill' | 'deck';
+  landing: 'hill' | 'deck' | 'pad';
   /** fraction of max exit speed the landing window is designed around */
   window?: [number, number, number];
 }
@@ -21,10 +21,10 @@ export const LEVELS: LevelDef[] = [
     landing: 'hill',
   },
   {
-    id: 2, name: 'TABLETOP', tag: 'Kicker to deck',
-    hint: 'Land on the flat deck. Hold SPACE for the belly blasts to soften the drop.',
-    segments: [{ type: 'straight', length: 70 }, { type: 'arc', angle: 20, radius: 50 }, { type: 'straight', length: 5 }],
-    landing: 'deck',
+    id: 11, name: 'INVERSION', tag: 'Inverted ramp · 125° · ease it down',
+    hint: 'Up the wall and past vertical: you leave upside down and spinning. Turn it round, then hold SPACE and lower it onto the pad. Gently.',
+    segments: [{ type: 'straight', length: 14 }, { type: 'arc', angle: 125, radius: 11 }],
+    landing: 'pad',
   },
   {
     id: 3, name: 'SKYHOOK', tag: 'Curved lip · backflip',

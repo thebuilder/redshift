@@ -272,7 +272,8 @@ export function buildLevelScene(level: BuiltLevel): LevelScene {
   // start gantry (F1-style lights)
   const startLights: THREE.Mesh[] = [];
   {
-    const f = track.sample(level.startS + 9);
+    // in front of the car, but never out on the ramp itself (short run-ups)
+    const f = track.sample(Math.max(level.startS + 2.5, Math.min(level.startS + 9, rampS - 3)));
     const H = 6.5;
     const metal = new THREE.MeshStandardMaterial({ color: 0x2a2c31, metalness: 0.8, roughness: 0.4 });
     for (const side of [-1, 1]) {

@@ -207,7 +207,7 @@ export class Game {
       const b = best[def.id];
       const el = document.createElement('button');
       el.className = 'lv' + (i === this.menuSel ? ' sel' : '');
-      el.innerHTML = `<div class="n">${String(def.id).padStart(2, '0')}</div><div class="t">${def.name}</div><div class="k">${def.tag}</div>
+      el.innerHTML = `<div class="n">${String(i + 1).padStart(2, '0')}</div><div class="t">${def.name}</div><div class="k">${def.tag}</div>
         <svg viewBox="0 0 200 46" preserveAspectRatio="xMidYMid meet">${this.profileSvg(p)}</svg>
         ${b ? `<div class="best">${b.total.toLocaleString('en-US')}<b>${b.grade}</b></div>` : ''}`;
       el.addEventListener('click', () => { this.audio.init(); this.audio.click(); this.startLevel(i); });
@@ -262,7 +262,7 @@ export class Game {
     this.scene.add(this.levelScene.group);
     this.rig.stations = this.levelScene.cameraStations;
     this.smoke.lights = this.levelScene.smokeLights;
-    this.hud.setLevel(LEVELS[i].id, LEVELS[i].name);
+    this.hud.setLevel(i + 1, LEVELS[i].name);
     this.resetRun();
   }
 
@@ -314,7 +314,7 @@ export class Game {
   private enterIntro() {
     this.resetRun();
     const def = LEVELS[this.levelIdx];
-    $('i-num').textContent = `RAMP ${String(def.id).padStart(2, '0')} / ${LEVELS.length}`;
+    $('i-num').textContent = `RAMP ${String(this.levelIdx + 1).padStart(2, '0')} / ${LEVELS.length}`;
     $('i-name').textContent = def.name;
     $('i-tag').textContent = def.tag;
     $('i-hint').textContent = this.touch ? touchHint(def.hint) : def.hint;
@@ -596,7 +596,7 @@ export class Game {
     $('r-grade').classList.toggle('crash', r.crashed);
     $('r-verdict').textContent = r.crashed ? r.reason : `${r.verdict} LANDING`;
     $('r-verdict').classList.toggle('crash', r.crashed);
-    $('r-level').textContent = `${String(def.id).padStart(2, '0')} · ${def.name} · ${r.time.toFixed(2)} S`;
+    $('r-level').textContent = `${String(this.levelIdx + 1).padStart(2, '0')} · ${def.name} · ${r.time.toFixed(2)} S`;
     $('r-best').textContent = isBest && !r.crashed ? 'NEW BEST' : '';
     const host = $('r-lines');
     host.innerHTML = '';

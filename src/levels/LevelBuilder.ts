@@ -193,6 +193,19 @@ function designDeck(lo: Traj, mid: Traj, hi: Traj, origin: THREE.Vector3, dir: T
   return makeHill('deck', origin, dir, pts, uMidCross, 12, [crossDesc(lo, hD) ?? uA, uHi], 13);
 }
 
+/** a low, wide landing pad at street level: you come down onto it on the belly blasts */
+function designPad(lo: Traj, mid: Traj, hi: Traj, origin: THREE.Vector3, dir: THREE.Vector2): Hill {
+  const hP = 0.9;
+  const uLo = crossDesc(lo, hP) ?? lo.u[lo.u.length - 1];
+  const uMid = crossDesc(mid, hP) ?? uLo + 10;
+  const uHi = crossDesc(hi, hP) ?? uMid + 10;
+  const uA = Math.min(uLo, uMid) - 22;
+  const uB = Math.max(uHi, uMid) + 26;
+  const ramp = hP / Math.tan(THREE.MathUtils.degToRad(14));
+  const pts: [number, number][] = [[uA - ramp, 0], [uA, hP], [uB, hP], [uB + ramp, 0]];
+  return makeHill('deck', origin, dir, pts, uMid, 9, [uLo, uHi], 16);
+}
+
 const cache = new Map<number, BuiltLevel>();
 
 export function buildLevel(def: LevelDef): BuiltLevel {
@@ -215,11 +228,12 @@ export function buildLevel(def: LevelDef): BuiltLevel {
   if (dir.lengthSq() < 1e-4) dir.set(1, 0);
   dir.normalize();
   const origin = new THREE.Vector3(exitPos.x, 0, exitPos.z);
-  const w = def.window ?? (def.landing === 'deck' ? [0.9, 0.99, 1.04] : [0.9, 1.0, 1.12]);
+  const w = def.window ?? (def.landing !== 'hill' ? [0.9, 0.99, 1.04] : [0.9, 1.0, 1.12]);
   const trajs = w.map((f) => ballistic(exitPos, exitVel.clone().multiplyScalar(f), dir, origin));
   // steep, fast launches spread out a lot: narrow the speed window until a hill fits
   let hill: Hill | null = null;
   if (def.landing === 'deck') hill = designDeck(trajs[0], trajs[1], trajs[2], origin, dir);
+  else if (def.landing === 'pad') hill = designPad(trajs[0], trajs[1], trajs[2], origin, dir);
   else {
     let lo = w[0], hi = w[2];
     for (let k = 0; k < 6 && !hill; k++) {

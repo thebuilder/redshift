@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="55%" r="70%">
+      <stop offset="0" stop-color="#2a0307"/>
+      <stop offset="0.6" stop-color="#090102"/>
+      <stop offset="1" stop-color="#020202"/>
+    </radialGradient>
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="18"/>
+    </filter>
+    <path id="r" d="M130 404 L182 108 H358 L401 160 L392 212 L331 264 H155 M285 264 L366 404"/>
+  </defs>
+  <rect width="512" height="512" rx="104" fill="url(#bg)"/>
+  <!-- a hard-edged neon R, leaning forward like it is already moving -->
+  <g fill="none" stroke-linejoin="miter" stroke-miterlimit="10">
+    <use href="#r" stroke="#ff1a30" stroke-width="56" stroke-opacity="0.75" filter="url(#glow)"/>
+    <use href="#r" stroke="#ff2438" stroke-width="32"/>
+    <use href="#r" stroke="#ffc9ce" stroke-width="8"/>
+  </g>
+</svg>

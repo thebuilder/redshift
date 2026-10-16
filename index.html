@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <title>Redshift</title>
+    <meta name="description" content="Launch an electric hypercar off neon ramps, then fly it with air-blast thrusters and land it clean. A physics game in the browser." />
+    <meta name="theme-color" content="#000000" />
+    <meta name="color-scheme" content="dark" />
+    <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="favicon-32.png" type="image/png" sizes="32x32" />
+    <link rel="apple-touch-icon" href="apple-touch-icon.png" />
+    <link rel="manifest" href="site.webmanifest" />
+    <link rel="canonical" href="%VITE_SITE_URL%" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="REDSHIFT" />
+    <meta property="og:title" content="REDSHIFT" />
+    <meta property="og:description" content="Launch an electric hypercar off neon ramps, then fly it with air-blast thrusters and land it clean." />
+    <meta property="og:url" content="%VITE_SITE_URL%" />
+    <meta property="og:image" content="%VITE_SITE_URL%og-image.jpg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="A white electric car racing down a neon-lit runway toward a ramp, under the REDSHIFT logo" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="REDSHIFT" />
+    <meta name="twitter:description" content="Launch an electric hypercar off neon ramps, then fly it with air-blast thrusters and land it clean." />
+    <meta name="twitter:image" content="%VITE_SITE_URL%og-image.jpg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;500;600;700&family=Michroma&display=swap" rel="stylesheet" />
+  </head>
+  <body>
+    <canvas id="gl"></canvas>
+
+    <div id="hud" class="hidden">
+      <div class="hud-top-left">
+        <div class="lvl"><span id="h-lvlnum">01</span><span id="h-lvlname">KICKSTART</span></div>
+        <div class="row">
+          <span class="chip" id="h-phase">READY</span>
+          <span class="timer" id="h-time">0.00</span>
+        </div>
+      </div>
+      <div class="hud-top-right">
+        <div class="chip ghost" id="h-cam">CAM · CHASE</div>
+        <div class="chip ghost" id="h-assist">ASSIST · RATE</div>
+      </div>
+
+      <div id="h-msg" class="msg"></div>
+      <div id="h-sub" class="submsg"></div>
+
+      <div class="hud-bottom-left">
+        <div class="gauge" id="g-speed">
+          <svg viewBox="0 0 120 120"><path class="g-bg" /><path class="g-val" /><g class="ticks"></g></svg>
+          <div class="g-label">SPEED</div>
+          <div class="g-value" id="v-speed">0</div>
+          <div class="g-unit"><span>KM/H</span> · <span id="v-mph">0</span> MPH</div>
+        </div>
+        <div class="gauge" id="g-force">
+          <svg viewBox="0 0 120 120"><path class="g-bg" /><path class="g-val" /><g class="ticks"></g></svg>
+          <div class="g-label">FORCE</div>
+          <div class="g-value" id="v-g">1.0</div>
+          <div class="g-unit"><span>G</span> · <span id="v-df">0</span> KG DF</div>
+        </div>
+        <div class="attitude">
+          <div id="att-view"></div>
+          <div class="att-read"><span>PITCH <b id="v-pitch">0</b>°</span><span>ROLL <b id="v-roll">0</b>°</span><span>YAW-RATE <b id="v-yaw">0</b></span></div>
+        </div>
+      </div>
+
+      <div class="hud-bottom-right">
+        <div class="exhaust">
+          <div class="ex-head"><span>EXHAUSTS</span><span id="v-active">0 / 12</span></div>
+          <div class="ex-views">
+            <svg id="ex-top" viewBox="0 0 80 96"></svg>
+            <svg id="ex-side" viewBox="0 0 96 80"></svg>
+            <svg id="ex-rear" viewBox="0 0 80 80"></svg>
+          </div>
+          <div class="tank"><span>AIR</span><div class="bar"><i id="v-tank"></i></div><b id="v-tankp">100%</b></div>
+        </div>
+        <div class="gauge" id="g-alt">
+          <svg viewBox="0 0 120 120"><path class="g-bg" /><path class="g-val" /><g class="ticks"></g></svg>
+          <div class="g-label">ALTITUDE</div>
+          <div class="g-value" id="v-alt">0.0</div>
+          <div class="g-unit"><span>M AGL</span> · <span id="v-vs">0.0</span> V/S</div>
+        </div>
+      </div>
+
+      <div id="h-guide" class="guide hidden">
+        <div><label>ALIGN</label><b id="v-align">0°</b></div>
+        <div><label>IMPACT</label><b id="v-impact">0.0</b><small>m/s</small></div>
+        <div><label>T-MINUS</label><b id="v-tti">0.0</b><small>s</small></div>
+      </div>
+      <div id="h-keys" class="keys"></div>
+    </div>
+
+    <div id="menu" class="screen">
+      <div class="brand">
+        <div class="logo">REDSHIFT</div>
+      </div>
+      <div class="levels" id="levels"></div>
+      <div class="menu-foot">
+        <div class="controls">
+          <div><kbd>W</kbd><kbd>S</kbd> throttle / brake · in air: pitch</div>
+          <div><kbd>A</kbd><kbd>D</kbd> steer · in air: roll</div>
+          <div><kbd>Q</kbd><kbd>E</kbd> yaw blasts</div>
+          <div><kbd>Space</kbd> belly blasts (lift)</div>
+          <div><kbd>C</kbd> camera · <kbd>F</kbd> assist · <kbd>G</kbd> guidance · <kbd>R</kbd> retry</div>
+        </div>
+        <div class="foot-right">Touch and gamepad supported · <span id="m-mute">Sound on (M)</span> · <span class="build">Build 15</span></div>
+      </div>
+    </div>
+
+    <div id="intro" class="screen hidden">
+      <div class="intro-card">
+        <div class="intro-num" id="i-num">01</div>
+        <div class="intro-name" id="i-name">KICKSTART</div>
+        <div class="intro-tag" id="i-tag">Classic kicker</div>
+        <svg id="i-profile" viewBox="0 0 400 120"></svg>
+        <div class="intro-hint" id="i-hint"></div>
+        <div class="intro-go">Press any key or click to start</div>
+      </div>
+    </div>
+
+    <div id="results" class="screen hidden">
+      <div class="res-card">
+        <div class="res-top">
+          <div class="res-grade" id="r-grade">S</div>
+          <div class="res-head">
+            <div class="res-verdict" id="r-verdict">PERFECT</div>
+            <div class="res-level" id="r-level">01 · KICKSTART</div>
+            <div class="res-total"><span id="r-total">0</span><small>PTS</small><em id="r-best"></em></div>
+          </div>
+        </div>
+        <div class="res-lines" id="r-lines"></div>
+        <div class="res-actions">
+          <button data-act="retry"><kbd>R</kbd> Retry</button>
+          <button data-act="next" class="primary"><kbd>Enter</kbd> Next ramp</button>
+          <button data-act="menu"><kbd>Esc</kbd> Menu</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="pause" class="screen hidden">
+      <div class="pause-card">
+        <div class="pause-title">PAUSED</div>
+        <button data-act="resume" class="primary">Resume</button>
+        <button data-act="retry">Restart ramp</button>
+        <button data-act="menu">Level select</button>
+      </div>
+    </div>
+
+    <div id="rotate">Turn your phone sideways for the best view</div>
+    <div id="boot" class="screen"><div class="boot-logo">REDSHIFT</div><div class="boot-bar"><i></i></div></div>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
